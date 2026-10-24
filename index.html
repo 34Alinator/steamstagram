@@ -16,7 +16,7 @@
         .then(data => {
           const info = data["367520"];
           document.getElementById("status").textContent = info.data.title;
-          document.getElementById("trailer"),src = info.data.movies[0].mp4.max;
+          document.getElementById("trailer").src = info.data.movies[0].mp4.max;
         });
     </script>
   </body>
