@@ -35,9 +35,13 @@
       
       const movies = Array.isArray(info.movies) ? info.movies : [];
       const videoUrl = movies
-        .map(movie => movie?.mp4?.max || movie?.mp4?.["480"])
+        .map(movie =>
+          movie?.mp4?.max ||
+          movie?.mp4?.["480"] ||
+          movie?.webm?.max ||
+          movie?.webm?.["480"]
+        )
         .find(Boolean);
-
 
       if (videoUrl) {
         video.src = videoUrl;
