@@ -14,14 +14,14 @@
 
 <script>
   const API = "https://steamstagram.onrender.com";
-
-  fetch(API + "/details?appid=367520")
+  let GameID = "3556750"
+  fetch(API + "/details?appid=" + GameID)
     .then(res => {
       if (!res.ok) throw new Error(`API returned ${res.status}`);
       return res.json();
     })
     .then(data => {
-      const info = data["367520"]?.data;
+      const info = data[GameID]?.data;
       const status = document.getElementById("status");
       const video = document.getElementById("trailer");
       const image = document.getElementById("game-image");
