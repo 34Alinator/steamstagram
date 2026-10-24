@@ -8,16 +8,59 @@
     <p id="status">Loading...</p>
     <video id="trailer" controls style="max-width:100%"></video>
 
-    <script>
-      const API = "https://steamstagram.onrender.com";
+<p id="status">Loading...</p>
+<video id="trailer" controls style="max-width:100%" hidden></video>
+<img id="game-image" alt="Game image" style="max-width:100%" hidden>
 
-      fetch(API + "/details?appid=367520")
-        .then(res => res.json())
-        .then(data => {
-          const info = data["367520"];
-          document.getElementById("status").textContent = info.data.title;
-          document.getElementById("trailer").src = info.data.movies[0].mp4.max;
-        });
-    </script>
+<script>
+  const API = "https://steamstagram.onrender.com";
+
+  fetch(API + "/details?appid=367520")
+    .then(res => {
+      if (!res.ok) throw new Error(`API returned ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      const info = data["367520"]?.data;
+      const status = document.getElementById("status");
+      const video = document.getElementById("trailer");
+      const image = document.getElementById("game-image");
+
+      if (!info) {
+        status.textContent = "Game details were not found.";
+        return;
+      }
+
+      status.textContent = info.name ?? "Game";
+      
+      const movies = Array.isArray(info.movies) ? info.movies : [];
+      const videoUrl = movies
+        .map(movie => movie.mp4?.max || movie.mp4?.["480"])
+        .find(Boolean);
+
+      if (videoUrl) {
+        video.src = videoUrl;
+        video.hidden = false;
+        return;
+      }
+
+      const screenshots = Array.isArray(info.screenshots)
+        ? info.screenshots
+        : [];
+      const imageUrl = screenshots[0]?.path_full || info.header_image;
+
+      if (imageUrl) {
+        image.src = imageUrl;
+        image.hidden = false;
+      } else {
+        status.textContent += " — no image or playable video is available.";
+      }
+    })
+    .catch(error => {
+      document.getElementById("status").textContent =
+        `Could not load game details: ${error.message}`;
+      console.error(error);
+    });
+</script>
   </body>
 </html>
